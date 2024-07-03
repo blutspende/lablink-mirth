@@ -215,7 +215,6 @@ while  (retry === true) {
 			break;
 		default:
 			if (retryCount &lt; 5) {
-				logger.info(&apos;retryCount: &apos; + retryCount.toString());
 				java.lang.Thread.sleep(5000);
 				retryCount++;
 			} else {
@@ -806,7 +805,6 @@ for each (msgRow in $(&apos;ordermessage&apos;)[&apos;row&apos;]) {
 if (sampleIDCompare != &apos;&apos;) {
 	orders.push(order);
 };
-logger.info(JSON.stringify(orders))
 channelMap.put(&apos;orders&apos;, JSON.stringify(orders));</script>
               </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
             </elements>

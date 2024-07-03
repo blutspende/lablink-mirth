@@ -489,7 +489,6 @@ while  (retry === true) {
 			break;
 		default:
 			if (retryCount &lt; 5) {
-				logger.info(&apos;retryCount: &apos; + retryCount.toString());
 				java.lang.Thread.sleep(5000);
 				retryCount++;
 			} else {
@@ -591,7 +590,6 @@ while  (readResult === true) {
 
 	var sendMsg = {&apos;token&apos;: $(&apos;token&apos;), &apos;page&apos;: page.toString(), &apos;downloadedTag&apos;: downloadedTag};
 	var response = router.routeMessage(&apos;ll read results&apos;, JSON.stringify(sendMsg));
-	logger.info(&apos;response: &apos; + JSON.stringify(response));
 
 	var httpStatus = response.getStatusMessage() + &apos;&apos;;
 	
@@ -616,7 +614,7 @@ if (results.length &gt; 0) {
 	channelMap.put(&apos;results&apos;, results);
 	return true;
 } else {
-	logger.error(&apos;&gt;&gt;ll get results from lablink answer Loop Lablink Reader NO RESULTS&lt;&lt;&apos;);
+	logger.warn(&apos;&gt;&gt;ll get results from lablink answer Loop Lablink Reader NO RESULTS&lt;&lt;&apos;);
 	channelMap.put(&apos;results&apos;, results);
 	return false;
 }</script>
