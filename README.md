@@ -17,7 +17,7 @@ Checks lablink for new results and writes them to the results file.
 * ll set orderIds tags
 
 ### lablink results with pdf 1.0
-Checks lablink for new results writes them to the results file and create result pdf.
+Checks lablink for new results writes them to the results file and create results pdf.
 > Requires the channel group `lablink tools 1.0`
 #### Channels
 * ll get results from lablink answer
