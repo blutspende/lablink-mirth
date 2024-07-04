@@ -16,6 +16,16 @@ Checks lablink for new results and writes them to the results file.
 * ll write results file
 * ll set orderIds tags
 
+### lablink results with pdf 1.0
+Checks lablink for new results writes them to the results file and create result pdf.
+> Requires the channel group `lablink tools 1.0`
+#### Channels
+* ll get results from lablink answer
+* ll read results
+* ll write results file
+* ll set orderIds tags
+* ll write result report
+
 ### lablink tools 1.0
 Different individual tool channels
 #### Channels

@@ -1,12 +1,12 @@
 <channelGroup version="4.5.0">
   <id>4bd4dda8-935f-4f7a-90b1-918874483e8b</id>
-  <name>lablink results</name>
-  <revision>1</revision>
+  <name>lablink results with pdf</name>
+  <revision>4</revision>
   <lastModified>
-    <time>1718262508682</time>
+    <time>1719561570332</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <description>create result file for lablink results</description>
+  <description>create result file and pdf for lablink results</description>
   <channels>
     <channel version="4.5.0">
       <id>d0f1ad42-82de-4c97-8137-f1c77964f277</id>
@@ -339,10 +339,10 @@ return;</undeployScript>
     </channel>
     <channel version="4.5.0">
       <id>107a88a4-921f-4e69-911a-77143d7c1ebe</id>
-      <nextMetaDataId>9</nextMetaDataId>
+      <nextMetaDataId>10</nextMetaDataId>
       <name>ll get results from lablink answer</name>
       <description></description>
-      <revision>4</revision>
+      <revision>13</revision>
       <sourceConnector version="4.5.0">
         <metaDataId>0</metaDataId>
         <name>sourceConnector</name>
@@ -614,6 +614,7 @@ if (results.length &gt; 0) {
 	channelMap.put(&apos;results&apos;, results);
 	return true;
 } else {
+	logger.
 	logger.warn(&apos;&gt;&gt;ll get results from lablink answer Loop Lablink Reader NO RESULTS&lt;&lt;&apos;);
 	channelMap.put(&apos;results&apos;, results);
 	return false;
@@ -841,6 +842,98 @@ if (orderIdsTags.length &gt; 0) {
           <enabled>true</enabled>
           <waitForPrevious>true</waitForPrevious>
         </connector>
+        <connector version="4.5.0">
+          <metaDataId>9</metaDataId>
+          <name>Write Result Report</name>
+          <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.0">
+            <pluginProperties/>
+            <destinationConnectorProperties version="4.5.0">
+              <queueEnabled>false</queueEnabled>
+              <sendFirst>false</sendFirst>
+              <retryIntervalMillis>10000</retryIntervalMillis>
+              <regenerateTemplate>false</regenerateTemplate>
+              <retryCount>0</retryCount>
+              <rotate>false</rotate>
+              <includeFilterTransformer>false</includeFilterTransformer>
+              <threadCount>1</threadCount>
+              <threadAssignmentVariable></threadAssignmentVariable>
+              <validateResponse>false</validateResponse>
+              <resourceIds class="linked-hash-map">
+                <entry>
+                  <string>Default Resource</string>
+                  <string>[Default Resource]</string>
+                </entry>
+              </resourceIds>
+              <queueBufferSize>1000</queueBufferSize>
+              <reattachAttachments>true</reattachAttachments>
+            </destinationConnectorProperties>
+            <script>// Sends the results for writing the results report to ‘ll write result report’ 
+// and evaluates the result of the write process
+
+// important: THE FOLLOWING CODE MUST NOT BE CHANGED
+var results = $(&apos;results&apos;);
+
+
+if (results.length &gt; 0) {
+	var sendMsg = {&apos;token&apos;: $(&apos;token&apos;), &apos;results&apos;: results};
+	var response = router.routeMessage(&apos;ll write result report&apos;, JSON.stringify(sendMsg));
+	if (response.getStatus() + &apos;&apos; === &apos;SENT&apos;) {
+		return true;
+	} else {
+		logger.error(response.getStatusMessage() + &apos;&apos;);
+		return false;	
+	}
+
+	
+} else {
+	logger.info(&apos;No new results would be provided.&apos;);
+	return false;
+}</script>
+          </properties>
+          <transformer version="4.5.0">
+            <elements/>
+            <inboundTemplate encoding="base64"></inboundTemplate>
+            <outboundTemplate encoding="base64"></outboundTemplate>
+            <inboundDataType>RAW</inboundDataType>
+            <outboundDataType>RAW</outboundDataType>
+            <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+              <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+                <splitType>JavaScript</splitType>
+                <batchScript></batchScript>
+              </batchProperties>
+            </inboundProperties>
+            <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+              <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+                <splitType>JavaScript</splitType>
+                <batchScript></batchScript>
+              </batchProperties>
+            </outboundProperties>
+          </transformer>
+          <responseTransformer version="4.5.0">
+            <elements/>
+            <inboundDataType>RAW</inboundDataType>
+            <outboundDataType>RAW</outboundDataType>
+            <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+              <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+                <splitType>JavaScript</splitType>
+                <batchScript></batchScript>
+              </batchProperties>
+            </inboundProperties>
+            <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+              <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+                <splitType>JavaScript</splitType>
+                <batchScript></batchScript>
+              </batchProperties>
+            </outboundProperties>
+          </responseTransformer>
+          <filter version="4.5.0">
+            <elements/>
+          </filter>
+          <transportName>JavaScript Writer</transportName>
+          <mode>DESTINATION</mode>
+          <enabled>true</enabled>
+          <waitForPrevious>true</waitForPrevious>
+        </connector>
       </destinationConnectors>
       <preprocessingScript>// Modify the message variable below to pre process data
 return message;</preprocessingScript>
@@ -891,7 +984,7 @@ return;</undeployScript>
         <metadata>
           <enabled>true</enabled>
           <lastModified>
-            <time>1718271033906</time>
+            <time>1720094087359</time>
             <timezone>Europe/Berlin</timezone>
           </lastModified>
           <pruningSettings>
@@ -1155,7 +1248,7 @@ return;</undeployScript>
       <nextMetaDataId>2</nextMetaDataId>
       <name>ll write results file</name>
       <description></description>
-      <revision>1</revision>
+      <revision>3</revision>
       <sourceConnector version="4.5.0">
         <metaDataId>0</metaDataId>
         <name>sourceConnector</name>
@@ -1409,7 +1502,443 @@ return;</undeployScript>
         <metadata>
           <enabled>true</enabled>
           <lastModified>
-            <time>1718177180614</time>
+            <time>1719564871149</time>
+            <timezone>Europe/Berlin</timezone>
+          </lastModified>
+          <pruningSettings>
+            <archiveEnabled>true</archiveEnabled>
+            <pruneErroredMessages>false</pruneErroredMessages>
+          </pruningSettings>
+          <userId>2</userId>
+        </metadata>
+      </exportData>
+    </channel>
+    <channel version="4.5.0">
+      <id>5de44e91-81ba-4927-9e2f-3d6217d08323</id>
+      <nextMetaDataId>3</nextMetaDataId>
+      <name>ll write result report</name>
+      <description></description>
+      <revision>171</revision>
+      <sourceConnector version="4.5.0">
+        <metaDataId>0</metaDataId>
+        <name>sourceConnector</name>
+        <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.0">
+          <pluginProperties/>
+          <sourceConnectorProperties version="4.5.0">
+            <responseVariable>d1</responseVariable>
+            <respondAfterProcessing>true</respondAfterProcessing>
+            <processBatch>false</processBatch>
+            <firstResponse>false</firstResponse>
+            <processingThreads>1</processingThreads>
+            <resourceIds class="linked-hash-map">
+              <entry>
+                <string>Default Resource</string>
+                <string>[Default Resource]</string>
+              </entry>
+            </resourceIds>
+            <queueBufferSize>1000</queueBufferSize>
+          </sourceConnectorProperties>
+        </properties>
+        <transformer version="4.5.0">
+          <elements/>
+          <inboundDataType>RAW</inboundDataType>
+          <outboundDataType>RAW</outboundDataType>
+          <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+            <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+              <splitType>JavaScript</splitType>
+              <batchScript></batchScript>
+            </batchProperties>
+          </inboundProperties>
+          <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+            <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+              <splitType>JavaScript</splitType>
+              <batchScript></batchScript>
+            </batchProperties>
+          </outboundProperties>
+        </transformer>
+        <filter version="4.5.0">
+          <elements/>
+        </filter>
+        <transportName>Channel Reader</transportName>
+        <mode>SOURCE</mode>
+        <enabled>true</enabled>
+        <waitForPrevious>true</waitForPrevious>
+      </sourceConnector>
+      <destinationConnectors>
+        <connector version="4.5.0">
+          <metaDataId>1</metaDataId>
+          <name>Format output</name>
+          <properties class="com.mirth.connect.connectors.doc.DocumentDispatcherProperties" version="4.5.0">
+            <pluginProperties/>
+            <destinationConnectorProperties version="4.5.0">
+              <queueEnabled>false</queueEnabled>
+              <sendFirst>false</sendFirst>
+              <retryIntervalMillis>10000</retryIntervalMillis>
+              <regenerateTemplate>false</regenerateTemplate>
+              <retryCount>0</retryCount>
+              <rotate>false</rotate>
+              <includeFilterTransformer>false</includeFilterTransformer>
+              <threadCount>1</threadCount>
+              <threadAssignmentVariable></threadAssignmentVariable>
+              <validateResponse>false</validateResponse>
+              <resourceIds class="linked-hash-map">
+                <entry>
+                  <string>Default Resource</string>
+                  <string>[Default Resource]</string>
+                </entry>
+              </resourceIds>
+              <queueBufferSize>1000</queueBufferSize>
+              <reattachAttachments>true</reattachAttachments>
+            </destinationConnectorProperties>
+            <host>C:/mirth/results/files</host>
+            <outputPattern>RESULTS_${timestampFile}.pdf</outputPattern>
+            <documentType>pdf</documentType>
+            <encrypt>false</encrypt>
+            <output>FILE</output>
+            <password></password>
+            <pageWidth>297.00</pageWidth>
+            <pageHeight>210.00</pageHeight>
+            <pageUnit>MM</pageUnit>
+            <template>&lt;html&gt;
+	&lt;head&gt;
+		&lt;style&gt;
+			* 	{font-family:&quot;Courier New&quot;, Courier, monospace} 
+			h2	{text-align:center}
+			
+			.pagenumber:before {
+				content: counter(page);
+			}
+			.pagecount:before {
+				content: counter(pages);
+			}
+
+			table {
+				width:100%;
+				border:0; 
+				cellspacing:0; 
+				cellpadding:0;
+				position: absolute;
+				top: 50px;
+				-fs-table-paginate:paginate;
+
+			}
+			
+			tr:last-child th {
+				border-top: 1pt solid black;
+     			border-bottom: 1pt solid black;
+     			font-size:12px;
+     			line-height: 20px;
+    			}
+    			tr:last-child td {
+     			border-bottom: 1pt solid black;
+    			}
+
+    			tr { line-height: 10px;
+    				font-size:10px;}
+
+    			.fontWeightNormal {
+  				font-weight: normal;
+  				line-height: 12px;
+  				font-size:12px;
+			}
+
+			
+			@page {
+				size:297mm 210mm;
+				margin-top: 10mm;
+				margin-bottom: 20mm;
+				margin-left: 20mm;
+				margin-right: 20mm;
+				@top-center { content: element(header) };}
+				@bottom-center { content: element(footer) };}
+			}
+
+		&lt;/style&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+  		${htmlTable}  
+	&lt;/body&gt;
+&lt;/html&gt;</template>
+          </properties>
+          <transformer version="4.5.0">
+            <elements>
+              <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.0">
+                <name>Format Output</name>
+                <sequenceNumber>0</sequenceNumber>
+                <enabled>true</enabled>
+                <script>var recievedMsg = JSON.parse(msg);
+
+var token = recievedMsg.token;
+var results = recievedMsg.results;
+
+var sendMsg = {&apos;token&apos;: token};
+var response = router.routeMessage(&apos;ll read analytes&apos;, JSON.stringify(sendMsg));
+
+var analytesList = [];
+var locationName = &apos;&apos;;
+
+var httpStatus = response.getStatusMessage() + &apos;&apos;;
+switch (httpStatus) {
+	case &apos;200&apos;:
+		analytesList = JSON.parse(response.getMessage());
+		var timestampFile = DateUtil.getCurrentDate(&apos;yyyyMMdd_HHmmss&apos;);
+		channelMap.put(&apos;timestampFile&apos;, timestampFile);
+
+		var timestamp = DateUtil.getCurrentDate(&apos;HH:mm:ss dd.MM.yyyy&apos;);
+		var timestampDate = timestamp.substr(9,10);
+		var timestampTime = timestamp.substr(0,8);
+		channelMap.put(&apos;timestamp&apos;, timestamp);
+
+		var locationName = readLocation();
+		
+		var htmlTable = &apos;&lt;table&gt;&apos;;
+		resultsSorted = sortResultsBySampleCode(results);
+		htmlTable = createTableHeader(analytesList.items, locationName, resultsSorted.length, htmlTable);
+		htmlTable = createTableBody(resultsSorted, analytesList.items, htmlTable);
+		htmlTable += &apos;&lt;/table&gt;&apos;;
+		channelMap.put(&apos;htmlTable&apos;, htmlTable);
+		
+		return true;
+		break;
+	default:
+		logger.error(&apos;Read analytes failed: &apos; + response.getMessage());
+		return false;
+}
+
+
+
+function readLocation() {
+	var locationName = &apos;&apos;;
+
+	response = router.routeMessage(&apos;ll read institute locations&apos;, JSON.stringify(sendMsg));
+	
+	httpStatus = response.getStatusMessage() + &apos;&apos;;
+	switch (httpStatus) {
+		case &apos;200&apos;:
+			var location = JSON.parse(response.getMessage());
+			locationName = location.items[0].name;
+			channelMap.put(&apos;locationName&apos;, locationName);
+			return locationName;
+			break;
+		default:
+			logger.error(&apos;Read location failed: &apos; + response.getMessage());
+			return locationName;
+	}
+}
+
+function createTableHeader(analytes, locationName, resultsCount, htmlTable) {
+	
+	htmlTable += &apos;&lt;thead&gt;&apos;;
+	
+	htmlTable += &apos;&lt;tr&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot; colspan=&quot;&apos; + (analytes.length + 1) + &apos;&quot;&gt;BSD BaWüHe Institut&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot;&gt;&apos; + timestampDate + &apos;&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;/tr&gt;&apos;;
+
+	htmlTable += &apos;&lt;tr&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot; colspan=&quot;&apos; + (analytes.length + 1) + &apos;&quot;&gt;Frankfurt&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot;&gt;&apos; + timestampTime + &apos;&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;/tr&gt;&apos;;
+
+	htmlTable += &apos;&lt;tr&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot; colspan=&quot;&apos; + (analytes.length + 1) + &apos;&quot;&gt;ELA92R&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot;&gt;Page &lt;span class=&quot;pagenumber&quot;&gt;&lt;/span&gt; of &lt;span class=&quot;pagecount&quot;&gt;&lt;/span&gt;&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;/tr&gt;&apos;;
+
+	htmlTable += &apos;&lt;tr&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot; colspan=&quot;2&quot;&gt;&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot; colspan=&quot;&apos; + (analytes.length - 1) + &apos;&quot;&gt;Protocol for current export standard screening&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot;&gt;results &apos; + resultsCount + &apos;&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;/tr&gt;&apos;;
+
+	htmlTable += &apos;&lt;tr&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot; colspan=&quot;&apos; + (analytes.length + 2) + &apos;&quot;&gt;&apos; + locationName + &apos;&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;/tr&gt;&apos;;
+	
+	var tabelHeadRow = new XML(&apos;&lt;tr&gt;&lt;/tr&gt;&apos;);
+
+	htmlTable += &apos;&lt;tr class=&quot;header&quot;&gt;&apos;;
+	htmlTable += &apos;&lt;th &gt;Samplecode&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;th&gt;Sampledate&lt;/th&gt;&apos;;
+	for each (analyte in analytes) {
+		htmlTable += &apos;&lt;th&gt;&apos; + analyte.code + &apos;&lt;/th&gt;&apos;;
+	}
+	htmlTable += &apos;&lt;/tr&gt;&apos;;
+
+	htmlTable += &apos;&lt;/thead&gt;&apos;;
+	return htmlTable;
+}
+
+function createTableBody(resultsSorted, analytes, htmlTable) {
+
+	htmlTable += &apos;&lt;tbody&gt;&apos;;
+
+	for each (result in resultsSorted) {
+		htmlTable += &apos;&lt;tr&gt;&apos;;
+		htmlTable += &apos;&lt;td&gt;&apos; + result.sampleCode + &apos;&lt;/td&gt;&apos;;
+		htmlTable += &apos;&lt;td&gt;&apos; + result.sampleDate + &apos;&lt;/td&gt;&apos;;
+		for (column = 1; column &lt; analytes.length + 1; column++) {
+			var resultValue = &apos;&apos;;
+			var analyteCode = analytes[column - 1].code
+			for each (examination in result.examinations) {
+				if (analyteCode === examination.analyte) {
+					resultValue = examination.result;
+					if (examination.unit != &apos;&apos;) {
+						resultValue += &apos; &apos; + examination.unit	
+					}
+				}
+			}
+			htmlTable += &apos;&lt;td&gt;&apos; + resultValue + &apos;&lt;/td&gt;&apos;; 
+		}
+		htmlTable += &apos;&lt;/tr&gt;&apos;;		
+	}
+
+	htmlTable += &apos;&lt;tr&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot; colspan=&quot;&apos; + (analytes.length + 2) + &apos;&quot;&gt;*** end of list ***&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;/tr&gt;&apos;;
+	htmlTable += &apos;&lt;tr&gt;&apos;;
+	htmlTable += &apos;&lt;th class=&quot;fontWeightNormal&quot; colspan=&quot;&apos; + (analytes.length + 2) + &apos;&quot;&gt;Findings approved by the head of QC. The list was created automatically and therefore does not bear a signature.&lt;/th&gt;&apos;;
+	htmlTable += &apos;&lt;/tr&gt;&apos;;
+	
+	htmlTable += &apos;&lt;/tbody&gt;&apos;;
+	return htmlTable;
+}
+
+function sortResultsBySampleCode(results) {
+	
+	var resultsSorted = [];
+	for each (result in results) {
+		for each (examination in result.examinations) {
+			for each (result in examination.results) {
+				for each (sampleCode in examination.sampleCodes) {
+					var index = resultsSorted.findIndex(item =&gt; item.sampleCode === sampleCode);	
+					var unit = value = (&apos;unit&apos; in result) ? result.unit : &apos;&apos;;
+					if (index === -1) {
+						var resultAdd = {&apos;sampleCode&apos;:sampleCode,
+							&apos;sampleDate&apos;:examination.sampleDate,
+							&apos;examinations&apos;: [{&apos;analyte&apos;:result.analyte,
+								&apos;result&apos;:result.result,
+								&apos;unit&apos;:unit}]
+						};	
+						resultsSorted.push(resultAdd);
+					} else {
+						var examinationAdd = {&apos;analyte&apos;:result.analyte,
+								&apos;result&apos;:result.result,
+								&apos;unit&apos;:unit};	
+						resultsSorted[index].examinations.push(examinationAdd);
+					}
+					
+				}
+			}
+		}
+	}
+	resultsSorted.sort(
+		function(a, b){
+	    		let x = a.sampleCode.toLowerCase();
+	    		let y = b.sampleCode.toLowerCase();
+	    		if (x &lt; y) {return -1;}
+	    		if (x &gt; y) {return 1;}
+	    		return 0;
+	  	}
+  	);
+  	return resultsSorted
+
+}</script>
+              </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+            </elements>
+            <inboundTemplate encoding="base64"></inboundTemplate>
+            <outboundTemplate encoding="base64"></outboundTemplate>
+            <inboundDataType>RAW</inboundDataType>
+            <outboundDataType>RAW</outboundDataType>
+            <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+              <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+                <splitType>JavaScript</splitType>
+                <batchScript></batchScript>
+              </batchProperties>
+            </inboundProperties>
+            <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+              <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+                <splitType>JavaScript</splitType>
+                <batchScript></batchScript>
+              </batchProperties>
+            </outboundProperties>
+          </transformer>
+          <responseTransformer version="4.5.0">
+            <elements/>
+            <inboundDataType>RAW</inboundDataType>
+            <outboundDataType>RAW</outboundDataType>
+            <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+              <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+                <splitType>JavaScript</splitType>
+                <batchScript></batchScript>
+              </batchProperties>
+            </inboundProperties>
+            <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.0">
+              <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.0">
+                <splitType>JavaScript</splitType>
+                <batchScript></batchScript>
+              </batchProperties>
+            </outboundProperties>
+          </responseTransformer>
+          <filter version="4.5.0">
+            <elements/>
+          </filter>
+          <transportName>Document Writer</transportName>
+          <mode>DESTINATION</mode>
+          <enabled>true</enabled>
+          <waitForPrevious>true</waitForPrevious>
+        </connector>
+      </destinationConnectors>
+      <preprocessingScript>// Modify the message variable below to pre process data
+return message;</preprocessingScript>
+      <postprocessingScript>// This script executes once after a message has been processed
+// Responses returned from here will be stored as &quot;Postprocessor&quot; in the response map
+return;</postprocessingScript>
+      <deployScript>// This script executes once when the channel is deployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</deployScript>
+      <undeployScript>// This script executes once when the channel is undeployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</undeployScript>
+      <properties version="4.5.0">
+        <clearGlobalChannelMap>true</clearGlobalChannelMap>
+        <messageStorageMode>DEVELOPMENT</messageStorageMode>
+        <encryptData>false</encryptData>
+        <encryptAttachments>false</encryptAttachments>
+        <encryptCustomMetaData>false</encryptCustomMetaData>
+        <removeContentOnCompletion>false</removeContentOnCompletion>
+        <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
+        <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
+        <initialState>STARTED</initialState>
+        <storeAttachments>true</storeAttachments>
+        <metaDataColumns>
+          <metaDataColumn>
+            <name>SOURCE</name>
+            <type>STRING</type>
+            <mappingName>mirth_source</mappingName>
+          </metaDataColumn>
+          <metaDataColumn>
+            <name>TYPE</name>
+            <type>STRING</type>
+            <mappingName>mirth_type</mappingName>
+          </metaDataColumn>
+        </metaDataColumns>
+        <attachmentProperties version="4.5.0">
+          <type>None</type>
+          <properties/>
+        </attachmentProperties>
+        <resourceIds class="linked-hash-map">
+          <entry>
+            <string>Default Resource</string>
+            <string>[Default Resource]</string>
+          </entry>
+        </resourceIds>
+      </properties>
+      <exportData>
+        <metadata>
+          <enabled>true</enabled>
+          <lastModified>
+            <time>1720093832936</time>
             <timezone>Europe/Berlin</timezone>
           </lastModified>
           <pruningSettings>
